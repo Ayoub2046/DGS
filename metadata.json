@@ -1,0 +1,6 @@
+{
+  "name": "Wholesale Management System",
+  "description": "Wholesale inventory and sales management system operating in dozens and pairs with strict last price floor enforcement.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

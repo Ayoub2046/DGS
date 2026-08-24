@@ -1,0 +1,49 @@
+{
+  "name": "DUBUGAAS - Wholesale Footwear & Seller POS",
+  "short_name": "DUBUGAAS",
+  "description": "Wholesale footwear inventory, seller POS, dozen & pair management, and last price floor protection.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#4f46e5",
+  "orientation": "any",
+  "categories": ["business", "shopping", "productivity", "finance"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512 any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512 any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Sales POS Terminal",
+      "short_name": "POS",
+      "description": "Open cashier seller POS terminal",
+      "url": "/?tab=sales-pos",
+      "icons": [{ "src": "/icon.svg", "sizes": "96x96" }]
+    },
+    {
+      "name": "Product Inventory",
+      "short_name": "Products",
+      "description": "View and manage wholesale stock",
+      "url": "/?tab=products",
+      "icons": [{ "src": "/icon.svg", "sizes": "96x96" }]
+    },
+    {
+      "name": "Orders & Receipts",
+      "short_name": "Orders",
+      "description": "View sales history and receipts",
+      "url": "/?tab=orders",
+      "icons": [{ "src": "/icon.svg", "sizes": "96x96" }]
+    }
+  ]
+}
