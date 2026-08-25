@@ -508,6 +508,7 @@ export async function dbUpdateUser(id: string, updates: Partial<User>) {
   if (unavailableTables.has('users')) return { success: false, tableMissing: true };
   try {
     const payload: any = {};
+    if (updates.username !== undefined) payload.username = updates.username;
     if (updates.fullName !== undefined) payload.full_name = updates.fullName;
     if (updates.email !== undefined) payload.email = updates.email;
     if (updates.role !== undefined) payload.role = updates.role;
@@ -515,6 +516,7 @@ export async function dbUpdateUser(id: string, updates: Partial<User>) {
     if (updates.password !== undefined) payload.password = updates.password;
     if (updates.pin !== undefined) payload.pin = updates.pin;
     if (updates.phone !== undefined) payload.phone = updates.phone;
+    if (updates.avatarUrl !== undefined) payload.avatar_url = updates.avatarUrl;
 
     const { error } = await supabase.from('users').update(payload).eq('id', id);
     if (error) {

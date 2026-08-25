@@ -115,13 +115,18 @@ export const UserManagement: React.FC = () => {
     }
 
     if (editingUserId) {
-      updateUser(editingUserId, {
+      const updates: Partial<User> = {
         fullName: userFormData.fullName.trim(),
         username: userFormData.username.trim(),
         email: userFormData.email.trim(),
         phone: userFormData.phone.trim(),
         role: userFormData.role,
-      });
+      };
+      if (userFormData.password && userFormData.password.trim().length >= 4) {
+        updates.password = userFormData.password.trim();
+        updates.pin = userFormData.password.trim();
+      }
+      updateUser(editingUserId, updates);
     } else {
       addUser({
         fullName: userFormData.fullName.trim(),
@@ -423,21 +428,24 @@ export const UserManagement: React.FC = () => {
                   </div>
                 </div>
 
-                {!editingUserId && (
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                      Initial Password <span className="text-rose-500">*</span>
-                    </label>
-                    <input
-                      type="password"
-                      required
-                      placeholder="At least 4 characters"
-                      value={userFormData.password}
-                      onChange={e => setUserFormData({ ...userFormData, password: e.target.value })}
-                      className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
-                    />
-                  </div>
-                )}
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                    {editingUserId ? 'Change Password / PIN (Optional)' : 'Initial Password / PIN'} {!editingUserId && <span className="text-rose-500">*</span>}
+                  </label>
+                  <input
+                    type="password"
+                    required={!editingUserId}
+                    placeholder={editingUserId ? 'Leave blank to keep existing password' : 'At least 4 characters'}
+                    value={userFormData.password}
+                    onChange={e => setUserFormData({ ...userFormData, password: e.target.value })}
+                    className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
+                  />
+                  {editingUserId && (
+                    <p className="text-[10px] text-slate-400 mt-1">
+                      Enter a new password or PIN (min 4 characters) to change it immediately in the database.
+                    </p>
+                  )}
+                </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
