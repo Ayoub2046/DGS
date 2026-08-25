@@ -14,8 +14,10 @@ import {
   Menu,
   KeyRound,
   Database,
+  Fingerprint,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { checkBiometricsSupport } from '../../lib/biometrics';
 import { NotificationsPopover } from '../common/NotificationsPopover';
 import { PWAInstallButton } from '../common/PWAInstallButton';
 
@@ -48,9 +50,11 @@ export const Header: React.FC<HeaderProps> = ({
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [time, setTime] = useState(new Date());
+  const [isBiometricSupported, setIsBiometricSupported] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
+    checkBiometricsSupport().then(res => setIsBiometricSupported(res.supported));
     return () => clearInterval(timer);
   }, []);
 
@@ -130,10 +134,14 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           type="button"
           onClick={lockScreen}
-          className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
-          title="Lock Workstation (Requires PIN / Password to resume)"
+          className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer flex items-center gap-1"
+          title={isBiometricSupported ? "Lock POS Terminal (Fingerprint / PIN Protected)" : "Lock POS Terminal (PIN Protected)"}
         >
-          <Lock className="w-4 h-4" />
+          {isBiometricSupported ? (
+            <Fingerprint className="w-4 h-4 text-indigo-600" />
+          ) : (
+            <Lock className="w-4 h-4" />
+          )}
         </button>
 
         {/* Notifications Icon with Popover */}

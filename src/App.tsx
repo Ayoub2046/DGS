@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { Header } from './components/layout/Header';
 import { Sidebar } from './components/layout/Sidebar';
+import { LandingHomePage } from './components/home/LandingHomePage';
 import { SellerSalesDashboard } from './components/seller/SellerSalesDashboard';
 import { SellerOrderHistory } from './components/seller/SellerOrderHistory';
 import { ProductCatalogView } from './components/seller/ProductCatalogView';
@@ -31,7 +32,6 @@ const MainAppContent: React.FC = () => {
   const {
     currentUser,
     activeTab,
-    setActiveTab,
     navigateTo,
     isAuthenticated,
     recentActiveReceipt,
@@ -63,6 +63,19 @@ const MainAppContent: React.FC = () => {
   };
 
   const isAdmin = currentUser.role === 'admin';
+
+  // If user is not authenticated, display the public Home / Landing Portal Page
+  if (!isAuthenticated) {
+    return (
+      <div id="wms-root-app" className="min-h-screen w-full bg-slate-950">
+        <LandingHomePage onOpenLoginModal={() => setIsLoginModalOpen(true)} />
+        <LoginModal
+          isOpen={isLoginModalOpen}
+          onClose={() => setIsLoginModalOpen(false)}
+        />
+      </div>
+    );
+  }
 
   return (
     <div
@@ -299,7 +312,7 @@ const MainAppContent: React.FC = () => {
 
       {/* Global Authentication / Login Modal */}
       <LoginModal
-        isOpen={isLoginModalOpen || !isAuthenticated}
+        isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
       />
 

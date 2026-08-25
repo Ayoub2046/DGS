@@ -12,6 +12,8 @@ import {
   Briefcase,
   AlertTriangle,
   FileSpreadsheet,
+  Lock,
+  LogOut,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { PWAInstallButton } from '../common/PWAInstallButton';
@@ -29,7 +31,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onOpenSettingsModal,
   onOpenCsvModal,
 }) => {
-  const { currentUser, lowStockProducts, products } = useApp();
+  const { currentUser, lowStockProducts, products, lockScreen, logout } = useApp();
   const isAdmin = currentUser.role === 'admin';
 
   return (
@@ -244,8 +246,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
         )}
 
         {/* PWA Mobile & PC Install Action */}
-        <div className="pt-2">
+        <div className="pt-2 space-y-1">
           <PWAInstallButton variant="sidebar" />
+          <button
+            type="button"
+            onClick={lockScreen}
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors cursor-pointer"
+          >
+            <Lock className="w-4 h-4 text-indigo-400" />
+            <span>Lock POS Terminal</span>
+          </button>
+          <button
+            type="button"
+            onClick={logout}
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-rose-400 hover:bg-rose-950/40 hover:text-rose-300 transition-colors cursor-pointer"
+          >
+            <LogOut className="w-4 h-4 text-rose-400" />
+            <span>Sign Out / Home</span>
+          </button>
         </div>
       </div>
 

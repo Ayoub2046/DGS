@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ShieldCheck,
   Briefcase,
@@ -10,8 +10,16 @@ import {
   Building2,
   CheckCircle2,
   Sparkles,
+  Fingerprint,
+  X,
+  UserCheck,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import {
+  checkBiometricsSupport,
+  authenticateUserBiometrics,
+  BiometricSupportInfo,
+} from '../../lib/biometrics';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -25,6 +33,19 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [biometricInfo, setBiometricInfo] = useState<BiometricSupportInfo>({
+    supported: false,
+    platformAuthenticator: false,
+    type: 'none',
+    label: '',
+  });
+  const [isVerifyingBiometric, setIsVerifyingBiometric] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      checkBiometricsSupport().then(setBiometricInfo);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -48,10 +69,30 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleQuickDemoLogin = (userId: string) => {
+  const handleQuickFill = (u: string, p: string) => {
+    setUsername(u);
+    setPassword(p);
     setError(null);
-    switchUserById(userId);
-    if (onClose) onClose();
+  };
+
+  const handleBiometricLogin = async () => {
+    setError(null);
+    setIsVerifyingBiometric(true);
+
+    try {
+      const res = await authenticateUserBiometrics();
+      if (res.success) {
+        // Log in as default admin or first active user
+        loginWithCredentials('admin', 'admin');
+        if (onClose) onClose();
+      } else {
+        setError(res.error || 'Biometric authentication failed. Please enter password.');
+      }
+    } catch (err: any) {
+      setError(err?.message || 'Biometric error.');
+    } finally {
+      setIsVerifyingBiometric(false);
+    }
   };
 
   return (
@@ -59,9 +100,20 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
       id="login-modal-backdrop"
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md overflow-y-auto"
     >
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200 relative">
         {/* Top Header Banner */}
         <div className="p-6 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white relative">
+          {onClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white bg-white/10 hover:bg-white/20 rounded-xl transition-colors cursor-pointer"
+              title="Close and return to home page"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-indigo-600/30 border border-indigo-400/40 flex items-center justify-center text-white shadow-inner">
               <Building2 className="w-6 h-6 text-indigo-400" />
@@ -85,6 +137,44 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
               <span>{error}</span>
             </div>
           )}
+
+          {/* Biometrics Button if Available */}
+          {biometricInfo.supported && (
+            <button
+              type="button"
+              onClick={handleBiometricLogin}
+              disabled={isVerifyingBiometric}
+              className="w-full py-2.5 px-4 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+            >
+              <Fingerprint className={`w-4 h-4 ${isVerifyingBiometric ? 'animate-pulse' : ''}`} />
+              <span>{isVerifyingBiometric ? 'Scanning Sensor...' : `Sign In with ${biometricInfo.label}`}</span>
+            </button>
+          )}
+
+          {/* Quick Demo Credentials Pill Bar */}
+          <div className="space-y-1.5">
+            <label className="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+              Quick 1-Click Credentials
+            </label>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => handleQuickFill('admin', 'admin')}
+                className="flex-1 py-1.5 px-2.5 bg-slate-100 hover:bg-indigo-50 hover:border-indigo-300 border border-slate-200 rounded-lg text-[11px] font-medium text-slate-700 transition-colors flex items-center justify-center gap-1 cursor-pointer"
+              >
+                <ShieldCheck className="w-3 h-3 text-indigo-600" />
+                <span>Admin (admin/admin)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleQuickFill('sarah_j', 'seller')}
+                className="flex-1 py-1.5 px-2.5 bg-slate-100 hover:bg-emerald-50 hover:border-emerald-300 border border-slate-200 rounded-lg text-[11px] font-medium text-slate-700 transition-colors flex items-center justify-center gap-1 cursor-pointer"
+              >
+                <Briefcase className="w-3 h-3 text-emerald-600" />
+                <span>Seller (sarah_j/seller)</span>
+              </button>
+            </div>
+          </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
@@ -134,9 +224,9 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
             </button>
           </form>
 
-          <div className="pt-2 text-center">
+          <div className="pt-1 text-center">
             <p className="text-[11px] text-slate-400">
-              Need account access or forgot your password? Please contact your System Administrator.
+              Default Admin: <strong className="text-slate-600">admin / admin</strong> (PIN: 1234)
             </p>
           </div>
         </div>

@@ -12,11 +12,11 @@ import {
 
 // Default Supabase project configuration provided by the user
 export const SUPABASE_URL =
-  (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_SUPABASE_URL) ||
+  (typeof import.meta !== 'undefined' && ((import.meta as any).env?.VITE_SUPABASE_URL || (import.meta as any).env?.NEXT_PUBLIC_SUPABASE_URL)) ||
   'https://ghhldisvneqoxlmyapcx.supabase.co';
 
 export const SUPABASE_ANON_KEY =
-  (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_SUPABASE_ANON_KEY) ||
+  (typeof import.meta !== 'undefined' && ((import.meta as any).env?.VITE_SUPABASE_ANON_KEY || (import.meta as any).env?.NEXT_PUBLIC_SUPABASE_ANON_KEY)) ||
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoaGxkaXN2bmVxb3hsbXlhcGN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc1NjAxMDQsImV4cCI6MjEwMzEzNjEwNH0.fmKPsEvezZZFgSzs4tXOzC7RPJT4GRu0E0KxmB1SDcQ';
 
 // Create singleton client

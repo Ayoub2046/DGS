@@ -195,10 +195,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     return INITIAL_USERS[0];
   });
 
-  // Authentication & Screen Lock State
+  // Authentication & Screen Lock State (defaults to false so visitor sees home page first)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.AUTH_STATE);
-    return saved ? JSON.parse(saved) : true;
+    return saved ? JSON.parse(saved) : false;
   });
 
   const [isScreenLocked, setIsScreenLocked] = useState<boolean>(() => {
