@@ -1,26 +1,26 @@
 {
-  "name": "DUBUGAAS - Wholesale Footwear & Seller POS",
-  "short_name": "DUBUGAAS",
-  "description": "Wholesale footwear inventory, seller POS, dozen & pair management, and last price floor protection.",
+  "name": "HantiFlow - Business & Accounting",
+  "short_name": "HantiFlow",
+  "description": "Smart Business & Accounting, Wholesale Inventory & Seller POS Management System. Smart Business. Clear Numbers.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#0f172a",
-  "theme_color": "#4f46e5",
+  "theme_color": "#2563eb",
   "orientation": "any",
   "categories": ["business", "shopping", "productivity", "finance"],
   "icons": [
     {
-      "src": "/icon.svg",
-      "sizes": "192x192 512x512 any",
-      "type": "image/svg+xml",
-      "purpose": "any"
+      "src": "/hantiflow-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/icon.svg",
       "sizes": "192x192 512x512 any",
       "type": "image/svg+xml",
-      "purpose": "maskable"
+      "purpose": "any"
     }
   ],
   "shortcuts": [
@@ -29,21 +29,21 @@
       "short_name": "POS",
       "description": "Open cashier seller POS terminal",
       "url": "/?tab=sales-pos",
-      "icons": [{ "src": "/icon.svg", "sizes": "96x96" }]
+      "icons": [{ "src": "/hantiflow-logo.png", "sizes": "96x96" }]
     },
     {
       "name": "Product Inventory",
       "short_name": "Products",
       "description": "View and manage wholesale stock",
       "url": "/?tab=products",
-      "icons": [{ "src": "/icon.svg", "sizes": "96x96" }]
+      "icons": [{ "src": "/hantiflow-logo.png", "sizes": "96x96" }]
     },
     {
       "name": "Orders & Receipts",
       "short_name": "Orders",
       "description": "View sales history and receipts",
       "url": "/?tab=orders",
-      "icons": [{ "src": "/icon.svg", "sizes": "96x96" }]
+      "icons": [{ "src": "/hantiflow-logo.png", "sizes": "96x96" }]
     }
   ]
 }

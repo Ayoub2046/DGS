@@ -37,6 +37,7 @@ import {
 } from '../../lib/biometrics';
 import { PWAInstallButton } from '../common/PWAInstallButton';
 import { BiometricEnrollmentModal } from '../common/BiometricEnrollmentModal';
+import { AppLogo } from '../common/AppLogo';
 
 interface HeaderProps {
   onNavigateTab: (tab: string) => void;
@@ -111,23 +112,11 @@ export const Header: React.FC<HeaderProps> = ({
           <Menu className="w-5 h-5" />
         </button>
 
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white font-black text-sm shadow-md shadow-indigo-600/20">
-            <Building2 className="w-4 h-4" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-extrabold text-slate-900 text-sm tracking-tight">
-                {settings.companyName}
-              </span>
-              <span className="hidden sm:inline-block px-1.5 py-0.5 rounded text-[9px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
-                ERP
-              </span>
-            </div>
-            <p className="text-[10px] text-slate-600 font-medium hidden sm:block">
-              {settings.tagline || 'Wholesale Distribution & POS Management'}
-            </p>
-          </div>
+        <div className="flex items-center gap-2">
+          <AppLogo size="sm" showSubtitle={true} />
+          <span className="hidden xl:inline-block px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+            ERP POS
+          </span>
         </div>
       </div>
 

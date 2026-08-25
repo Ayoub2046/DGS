@@ -1,17 +1,17 @@
 import { User, Category, Product, Order, PriceChangeLog, InAppNotification, CompanySettings, CancellationLog } from '../types';
 
 export const INITIAL_SETTINGS: CompanySettings = {
-  companyName: 'Apex Wholesale Footwear Ltd.',
-  tagline: 'Premium Bulk Footwear & Accessories Distribution',
-  address: '450 Industrial Parkway, Suite 12, Logistics City',
-  phone: '+1 (800) 555-9823',
-  email: 'sales@apexwholesale.com',
-  taxId: 'TAX-88492019-WMS',
+  companyName: 'HantiFlow',
+  tagline: 'Smart Business. Clear Numbers. (Business & Accounting)',
+  address: '450 Commercial Financial Hub, Suite 100',
+  phone: '+1 (800) 555-4268',
+  email: 'contact@hantiflow.com',
+  taxId: 'HF-88492019-TAX',
   currencySymbol: '$',
   currencyCode: 'USD',
   timezone: 'America/New_York',
   lowStockThresholdPairs: 50, // 50 pairs threshold (~4.16 dozens)
-  receiptFooterNote: 'Thank you for your business! Goods sold in wholesale lots. All claims must be made within 7 business days.',
+  receiptFooterNote: 'Thank you for choosing HantiFlow! Smart Business. Clear Numbers. All claims must be made within 7 business days.',
   adminPin: '1234',
   sessionTimeoutMinutes: 30,
 };

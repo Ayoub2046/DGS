@@ -20,6 +20,7 @@ import {
   BiometricSupportInfo,
 } from '../../lib/biometrics';
 import { BiometricAuthModal } from './BiometricAuthModal';
+import { AppLogo } from './AppLogo';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -93,7 +94,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
       >
         <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200 relative">
           {/* Top Header Banner */}
-          <div className="p-6 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white relative">
+          <div className="p-6 bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white relative">
             {onClose && (
               <button
                 type="button"
@@ -106,17 +107,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
             )}
 
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-indigo-600/30 border border-indigo-400/40 flex items-center justify-center text-white shadow-inner">
-                <Building2 className="w-6 h-6 text-indigo-400" />
-              </div>
-              <div>
-                <h2 className="text-lg font-bold tracking-tight text-white">{settings.companyName}</h2>
-                <p className="text-xs text-indigo-200 font-medium">Secure Terminal Authentication</p>
-              </div>
+              <AppLogo size="md" variant="dark" showSubtitle={true} />
             </div>
-            <div className="mt-4 flex items-center gap-2 text-[11px] text-slate-300 bg-white/10 px-3 py-1.5 rounded-xl border border-white/10">
+            <div className="mt-4 flex items-center gap-2 text-[11px] text-blue-200 bg-white/10 px-3 py-1.5 rounded-xl border border-white/10">
               <Lock className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-              <span>256-bit Encrypted Session & Role-Based Access</span>
+              <span>HantiFlow 256-bit Encrypted Session &amp; Multi-Role POS</span>
             </div>
           </div>
 

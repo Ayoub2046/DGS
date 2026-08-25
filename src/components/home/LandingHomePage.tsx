@@ -32,6 +32,7 @@ import {
 } from '../../lib/biometrics';
 import { PWAInstallButton } from '../common/PWAInstallButton';
 import { BiometricAuthModal } from '../common/BiometricAuthModal';
+import { AppLogo } from '../common/AppLogo';
 
 interface LandingHomePageProps {
   onOpenLoginModal: () => void;
@@ -66,18 +67,10 @@ export const LandingHomePage: React.FC<LandingHomePageProps> = ({ onOpenLoginMod
       <header className="w-full border-b border-slate-800/80 bg-slate-950/85 backdrop-blur-md sticky top-0 z-30 px-4 sm:px-8 py-3.5">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-lg shadow-indigo-600/25">
-              <Building2 className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-base font-bold tracking-tight text-white">{settings.companyName}</span>
-                <span className="px-2 py-0.5 text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-md">
-                  ENTERPRISE ERP
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-400 hidden sm:block">Wholesale Footwear Distribution Portal</p>
-            </div>
+            <AppLogo size="md" variant="dark" showSubtitle={true} />
+            <span className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30 rounded-md">
+              ENTERPRISE ERP &amp; POS
+            </span>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
@@ -91,7 +84,7 @@ export const LandingHomePage: React.FC<LandingHomePageProps> = ({ onOpenLoginMod
             <button
               type="button"
               onClick={onOpenLoginModal}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/25 transition-all cursor-pointer hover:scale-[1.02]"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-blue-600/25 transition-all cursor-pointer hover:scale-[1.02]"
             >
               <LogIn className="w-4 h-4" />
               <span>Staff Sign In</span>
@@ -104,17 +97,32 @@ export const LandingHomePage: React.FC<LandingHomePageProps> = ({ onOpenLoginMod
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-8 py-10 sm:py-16 space-y-16">
         {/* Hero Section */}
         <section className="text-center max-w-3xl mx-auto space-y-6 pt-2">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold">
-            <ShieldCheck className="w-4 h-4 text-indigo-400" />
-            <span>Secure Role-Based Wholesale Enterprise Terminal</span>
+          {/* Main 3D Logo Showcase */}
+          <div className="flex justify-center mb-2">
+            <div className="relative group p-2">
+              <img
+                src="/hantiflow-logo.png"
+                alt="HantiFlow Business & Accounting"
+                className="w-28 h-28 sm:w-36 sm:h-36 rounded-3xl object-cover shadow-2xl ring-4 ring-blue-500/30 group-hover:scale-105 transition-transform duration-300 mx-auto"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-blue-600/90 text-white text-[10px] font-extrabold tracking-wider uppercase border border-blue-400/40 shadow-md whitespace-nowrap">
+                Smart Business. Clear Numbers.
+              </div>
+            </div>
+          </div>
+
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs font-semibold">
+            <ShieldCheck className="w-4 h-4 text-blue-400" />
+            <span>Secure Business &amp; Accounting Wholesale Terminal</span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight sm:leading-tight">
-            Wholesale Footwear ERP & Mobile POS Terminal
+            HantiFlow Business &amp; Accounting
           </h1>
 
           <p className="text-sm sm:text-base text-slate-400 leading-relaxed max-w-2xl mx-auto">
-            Comprehensive bulk footwear distribution system: manage wholesale dozen-to-pair stock, enforce strict minimum pricing rules, issue thermal customer receipts, and secure terminal sessions with biometric authentication.
+            Wholesale distribution &amp; retail sales management system: manage wholesale dozen-to-pair stock, enforce strict minimum pricing rules, issue thermal customer receipts, and secure terminal sessions with passkey and fingerprint biometrics.
           </p>
 
           {/* Action Center */}
@@ -122,19 +130,19 @@ export const LandingHomePage: React.FC<LandingHomePageProps> = ({ onOpenLoginMod
             <button
               type="button"
               onClick={onOpenLoginModal}
-              className="w-full sm:w-auto px-8 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-2xl shadow-xl shadow-indigo-600/25 flex items-center justify-center gap-2.5 transition-all cursor-pointer group hover:scale-[1.02]"
+              className="w-full sm:w-auto px-8 py-3.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold rounded-2xl shadow-xl shadow-blue-600/25 flex items-center justify-center gap-2.5 transition-all cursor-pointer group hover:scale-[1.02]"
             >
-              <Lock className="w-4 h-4 text-indigo-200" />
-              <span>Access Secure Terminal</span>
+              <Lock className="w-4 h-4 text-blue-200" />
+              <span>Access HantiFlow Terminal</span>
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </button>
 
             <button
               type="button"
               onClick={() => setIsBiometricModalOpen(true)}
-              className="w-full sm:w-auto px-6 py-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 text-sm font-bold rounded-2xl flex items-center justify-center gap-2.5 transition-all cursor-pointer hover:border-indigo-500/40"
+              className="w-full sm:w-auto px-6 py-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 text-sm font-bold rounded-2xl flex items-center justify-center gap-2.5 transition-all cursor-pointer hover:border-blue-500/40"
             >
-              <Fingerprint className="w-4 h-4 text-indigo-400" />
+              <Fingerprint className="w-4 h-4 text-blue-400" />
               <span>{hasEnrolledBiometrics ? 'Fingerprint Sign In' : 'Biometric Sensor Login'}</span>
             </button>
           </div>
@@ -297,12 +305,14 @@ export const LandingHomePage: React.FC<LandingHomePageProps> = ({ onOpenLoginMod
       {/* Footer */}
       <footer className="border-t border-slate-800/80 bg-slate-950 py-6 px-4 text-center text-xs text-slate-500 space-y-1.5">
         <div className="flex items-center justify-center gap-2">
-          <span className="font-semibold text-slate-400">{settings.companyName}</span>
+          <span className="font-semibold text-slate-300">HantiFlow</span>
           <span>•</span>
-          <span>DUBUGAAS Enterprise ERP & POS v2.4</span>
+          <span>Business &amp; Accounting ERP v3.0</span>
+          <span>•</span>
+          <span className="text-amber-400 font-medium">Smart Business. Clear Numbers.</span>
         </div>
         <p className="text-[11px] text-slate-600">
-          Secure Multi-User System • Protected by 256-bit Encryption & Hardware WebAuthn
+          Secure Multi-User System • Protected by 256-bit Encryption &amp; Hardware WebAuthn Biometrics
         </p>
       </footer>
 

@@ -64,7 +64,7 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({ variant = 'c
     } else {
       // Fallback instruction for browsers without beforeinstallprompt support
       alert(
-        'To install DUBUGAAS as an App:\n• On Chrome / Edge (Desktop or Android): Click the 3 dots menu (⋮) and choose "Install DUBUGAAS" or "Add to Home Screen".'
+        'To install HantiFlow as an App:\n• On Chrome / Edge (Desktop or Android): Click the 3 dots menu (⋮) and choose "Install HantiFlow" or "Add to Home Screen".'
       );
     }
   };
@@ -79,10 +79,10 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({ variant = 'c
         <button
           type="button"
           onClick={handleInstallClick}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-xl transition-all shadow-2xs hover:scale-[1.02] cursor-pointer"
-          title="Install DUBUGAAS App on this device"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl transition-all shadow-2xs hover:scale-[1.02] cursor-pointer"
+          title="Install HantiFlow App on this device"
         >
-          <Smartphone className="w-3.5 h-3.5 text-indigo-600" />
+          <Smartphone className="w-3.5 h-3.5 text-blue-600" />
           <span>Install App</span>
         </button>
       )}
@@ -91,32 +91,32 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({ variant = 'c
         <button
           type="button"
           onClick={handleInstallClick}
-          className="w-full flex items-center justify-between p-2.5 rounded-xl bg-indigo-950/70 hover:bg-indigo-900/80 border border-indigo-800/40 text-left transition-all group cursor-pointer shadow-xs"
+          className="w-full flex items-center justify-between p-2.5 rounded-xl bg-blue-950/70 hover:bg-blue-900/80 border border-blue-800/40 text-left transition-all group cursor-pointer shadow-xs"
         >
           <div className="flex items-center gap-2.5">
-            <div className="p-1.5 rounded-lg bg-indigo-600 text-white group-hover:scale-105 transition-transform">
+            <div className="p-1.5 rounded-lg bg-blue-600 text-white group-hover:scale-105 transition-transform">
               <Download className="w-4 h-4" />
             </div>
             <div>
-              <p className="text-xs font-bold text-indigo-100">Install PWA App</p>
-              <p className="text-[10px] text-indigo-300">Run on Phone &amp; PC</p>
+              <p className="text-xs font-bold text-blue-100">Install HantiFlow</p>
+              <p className="text-[10px] text-blue-300">Run on Phone &amp; PC</p>
             </div>
           </div>
-          <span className="text-[10px] uppercase font-bold bg-indigo-500/30 text-indigo-200 px-2 py-0.5 rounded-full border border-indigo-400/20">
-            Free
+          <span className="text-[10px] uppercase font-bold bg-blue-500/30 text-blue-200 px-2 py-0.5 rounded-full border border-blue-400/20">
+            PWA
           </span>
         </button>
       )}
 
       {variant === 'full' && (
-        <div className="p-3.5 bg-gradient-to-r from-indigo-900 to-slate-900 text-white rounded-2xl border border-indigo-800 shadow-sm flex items-center justify-between gap-3">
+        <div className="p-3.5 bg-gradient-to-r from-blue-900 to-slate-900 text-white rounded-2xl border border-blue-800 shadow-sm flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shrink-0">
+            <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shrink-0">
               <Smartphone className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-xs font-bold">Install DUBUGAAS Application</h4>
-              <p className="text-[11px] text-indigo-200">
+              <h4 className="text-xs font-bold">Install HantiFlow Application</h4>
+              <p className="text-[11px] text-blue-200">
                 Install as a progressive app on your phone, tablet, or desktop for 1-click POS access.
               </p>
             </div>
@@ -137,10 +137,10 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({ variant = 'c
           <div className="w-full max-w-sm bg-white rounded-3xl p-6 space-y-4 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-indigo-100 text-indigo-600">
+                <div className="p-2 rounded-xl bg-blue-100 text-blue-600">
                   <Smartphone className="w-5 h-5" />
                 </div>
-                <h3 className="text-sm font-bold text-slate-900">Install DUBUGAAS on iOS</h3>
+                <h3 className="text-sm font-bold text-slate-900">Install HantiFlow on iOS</h3>
               </div>
               <button
                 type="button"

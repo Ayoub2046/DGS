@@ -19,6 +19,7 @@ import {
   isUserBiometricEnrolled,
   BiometricSupportInfo,
 } from '../../lib/biometrics';
+import { AppLogo } from './AppLogo';
 
 export const LockScreenModal: React.FC = () => {
   const { isScreenLocked, unlockScreen, currentUser, settings, logout } = useApp();
@@ -119,12 +120,12 @@ export const LockScreenModal: React.FC = () => {
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-lg overflow-y-auto"
     >
       <div className="w-full max-w-sm bg-white rounded-3xl shadow-2xl border border-slate-200 p-6 text-center space-y-5 animate-in fade-in zoom-in-95 duration-150">
-        <div className="w-16 h-16 rounded-3xl bg-indigo-50 border-2 border-indigo-200 mx-auto flex items-center justify-center text-indigo-600 shadow-inner">
-          <Lock className="w-8 h-8" />
+        <div className="flex justify-center">
+          <AppLogo size="lg" showText={true} showSubtitle={true} />
         </div>
 
         <div>
-          <h3 className="text-base font-bold text-slate-900">Terminal Protected</h3>
+          <h3 className="text-base font-bold text-slate-900">HantiFlow Terminal Protected</h3>
           <p className="text-xs text-slate-500 mt-1">
             Logged in as <strong className="text-slate-800">{currentUser.fullName}</strong> ({currentUser.role})
           </p>

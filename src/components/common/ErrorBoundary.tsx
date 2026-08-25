@@ -45,7 +45,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
             </div>
 
             <div>
-              <h1 className="text-lg font-bold text-white tracking-tight">DUBUGAAS Application Error</h1>
+              <h1 className="text-lg font-bold text-white tracking-tight">HantiFlow Application Error</h1>
               <p className="text-xs text-slate-400 mt-1">
                 An unexpected error occurred during rendering.
               </p>

@@ -1,10 +1,12 @@
-// Service Worker for DUBUGAAS Wholesale & Seller POS PWA
-const CACHE_NAME = 'dubugaas-cache-v1';
+// Service Worker for HantiFlow Business & Accounting POS PWA
+const CACHE_NAME = 'hantiflow-cache-v1';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
   '/icon.svg',
+  '/hantiflow-logo.png',
+  '/logo.png',
 ];
 
 self.addEventListener('install', (event) => {

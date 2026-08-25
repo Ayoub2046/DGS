@@ -202,7 +202,7 @@ export async function enrollUserBiometrics(
       const creationOptions: PublicKeyCredentialCreationOptions = {
         challenge,
         rp: {
-          name: 'DUBUGAAS Wholesale ERP',
+          name: 'HantiFlow Business & Accounting',
           id: rpId,
         },
         user: {

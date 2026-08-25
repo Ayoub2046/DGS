@@ -10,10 +10,10 @@ if ('serviceWorker' in navigator && typeof window !== 'undefined') {
     navigator.serviceWorker
       .register('/sw.js')
       .then(registration => {
-        console.log('DUBUGAAS PWA ServiceWorker registered with scope:', registration.scope);
+        console.log('HantiFlow PWA ServiceWorker registered with scope:', registration.scope);
       })
       .catch(error => {
-        console.warn('DUBUGAAS PWA ServiceWorker registration failed:', error);
+        console.warn('HantiFlow PWA ServiceWorker registration failed:', error);
       });
   });
 }

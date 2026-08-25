@@ -1,6 +1,6 @@
 {
-  "name": "Wholesale Management System",
-  "description": "Wholesale inventory and sales management system operating in dozens and pairs with strict last price floor enforcement.",
+  "name": "HantiFlow - Business & Accounting",
+  "description": "HantiFlow: Smart Business & Accounting, Wholesale ERP, Inventory & POS Management System with Multi-Role Staff Controls.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
