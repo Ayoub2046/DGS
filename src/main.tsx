@@ -1,10 +1,11 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
+import { ErrorBoundary } from './components/common/ErrorBoundary.tsx';
 import './index.css';
 
 // Register Service Worker for PWA installability & offline caching
-if ('serviceWorker' in navigator && process.env.NODE_ENV !== 'test') {
+if ('serviceWorker' in navigator && typeof window !== 'undefined') {
   window.addEventListener('load', () => {
     navigator.serviceWorker
       .register('/sw.js')
@@ -19,7 +20,10 @@ if ('serviceWorker' in navigator && process.env.NODE_ENV !== 'test') {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   </StrictMode>,
 );
+
 
