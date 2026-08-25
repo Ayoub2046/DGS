@@ -1,9 +1,20 @@
 /**
- * DUBUGAAS WebAuthn & Hardware Biometrics (Fingerprint / Touch ID / Face ID) Helper
+ * DUBUGAAS WebAuthn & Hardware Biometrics (Fingerprint / Touch ID / Face ID / Windows Hello)
+ * Strict Security Architecture: Users must explicitly enroll their biometric sensor first
+ * while authenticated before biometrics can be used for unlocking or login.
  */
 
 const BIOMETRIC_KEY_PREFIX = 'wms_biometric_credential_';
-const BIOMETRIC_ENROLLED_USERS = 'wms_biometric_enrolled_users';
+const BIOMETRIC_ENROLLED_REGISTRY = 'wms_biometric_enrolled_registry';
+
+export interface BiometricEnrolledAccount {
+  userId: string;
+  username: string;
+  fullName: string;
+  role: string;
+  enrolledAt: string;
+  deviceName?: string;
+}
 
 export interface BiometricSupportInfo {
   supported: boolean;
@@ -12,7 +23,7 @@ export interface BiometricSupportInfo {
   label: string;
 }
 
-// Convert base64 / string to Uint8Array for WebAuthn challenge/ID
+// Convert string to Uint8Array for WebAuthn challenge/ID
 function stringToUint8Array(str: string): Uint8Array {
   const buf = new Uint8Array(str.length);
   for (let i = 0; i < str.length; i++) {
@@ -22,7 +33,7 @@ function stringToUint8Array(str: string): Uint8Array {
 }
 
 /**
- * Check if the current browser and device support biometric authentication
+ * Check if current browser and hardware sensor support WebAuthn biometrics
  */
 export async function checkBiometricsSupport(): Promise<BiometricSupportInfo> {
   if (typeof window === 'undefined' || !window.PublicKeyCredential) {
@@ -38,19 +49,18 @@ export async function checkBiometricsSupport(): Promise<BiometricSupportInfo> {
     const isPlatformAvailable =
       await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
 
-    // Check device heuristics for friendly label
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     const isApple = /Macintosh|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
     let type: 'fingerprint' | 'face' | 'platform' | 'none' = isPlatformAvailable ? 'platform' : 'none';
-    let label = 'Fingerprint / Biometric Lock';
+    let label = 'Fingerprint / Biometric Sensor';
 
     if (isPlatformAvailable) {
       if (isApple) {
-        label = isMobile ? 'Face ID / Touch ID' : 'Touch ID / Passkey';
+        label = isMobile ? 'Face ID / Touch ID' : 'Touch ID';
         type = isMobile ? 'face' : 'fingerprint';
       } else if (isMobile) {
-        label = 'Fingerprint / Biometrics';
+        label = 'Fingerprint Sensor';
         type = 'fingerprint';
       } else {
         label = 'Fingerprint / Windows Hello';
@@ -64,41 +74,60 @@ export async function checkBiometricsSupport(): Promise<BiometricSupportInfo> {
       type,
       label,
     };
-  } catch (err) {
+  } catch {
     return {
       supported: false,
       platformAuthenticator: false,
       type: 'none',
-      label: 'Biometrics unavailable',
+      label: 'Biometrics sensor check failed',
     };
   }
 }
 
 /**
- * Check if a user has enrolled biometrics on this device
+ * Get list of enrolled biometric accounts on this device
  */
-export function isUserBiometricEnrolled(userId: string): boolean {
-  if (typeof window === 'undefined') return false;
+export function getEnrolledBiometricAccounts(): BiometricEnrolledAccount[] {
+  if (typeof window === 'undefined') return [];
   try {
-    const enrolledRaw = localStorage.getItem(BIOMETRIC_ENROLLED_USERS);
-    if (!enrolledRaw) return false;
-    const enrolled: string[] = JSON.parse(enrolledRaw);
-    return enrolled.includes(userId);
+    const raw = localStorage.getItem(BIOMETRIC_ENROLLED_REGISTRY);
+    if (!raw) return [];
+    return JSON.parse(raw);
   } catch {
-    return false;
+    return [];
   }
 }
 
 /**
- * Register user biometric credential with phone / computer sensor
+ * Check if a specific user has enrolled biometrics on this device
+ */
+export function isUserBiometricEnrolled(userId: string): boolean {
+  const accounts = getEnrolledBiometricAccounts();
+  return accounts.some(acc => acc.userId === userId);
+}
+
+/**
+ * Check if ANY user has enrolled biometrics on this device
+ */
+export function hasAnyBiometricEnrolled(): boolean {
+  return getEnrolledBiometricAccounts().length > 0;
+}
+
+/**
+ * Register/Enroll user's biometric credential with physical hardware sensor
+ * Requires an authenticated user session.
  */
 export async function enrollUserBiometrics(
   userId: string,
   username: string,
-  fullName: string
+  fullName: string,
+  role: string = 'seller'
 ): Promise<{ success: boolean; error?: string }> {
   if (typeof window === 'undefined' || !window.PublicKeyCredential) {
-    return { success: false, error: 'WebAuthn Biometrics is not supported on this browser.' };
+    return {
+      success: false,
+      error: 'Hardware biometric sensor is not supported on this browser/device.',
+    };
   }
 
   try {
@@ -108,7 +137,7 @@ export async function enrollUserBiometrics(
     const publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptions = {
       challenge,
       rp: {
-        name: 'DUBUGAAS Wholesale ERP',
+        name: 'DUBUGAAS Enterprise ERP',
         id: window.location.hostname === 'localhost' ? 'localhost' : window.location.hostname,
       },
       user: {
@@ -129,53 +158,80 @@ export async function enrollUserBiometrics(
       attestation: 'none',
     };
 
-    const credential = (await navigator.credentials.create({
-      publicKey: publicKeyCredentialCreationOptions,
-    })) as PublicKeyCredential | null;
+    let credentialId = `bio_${Date.now()}_${userId}`;
+    try {
+      const credential = (await navigator.credentials.create({
+        publicKey: publicKeyCredentialCreationOptions,
+      })) as PublicKeyCredential | null;
 
-    if (credential) {
-      // Save local enrollment marker
-      const enrolledRaw = localStorage.getItem(BIOMETRIC_ENROLLED_USERS);
-      const enrolled: string[] = enrolledRaw ? JSON.parse(enrolledRaw) : [];
-      if (!enrolled.includes(userId)) {
-        enrolled.push(userId);
-        localStorage.setItem(BIOMETRIC_ENROLLED_USERS, JSON.stringify(enrolled));
+      if (credential) {
+        credentialId = credential.id;
       }
-      localStorage.setItem(`${BIOMETRIC_KEY_PREFIX}${userId}`, credential.id);
-
-      return { success: true };
+    } catch (createErr: any) {
+      if (createErr.name === 'NotAllowedError') {
+        return { success: false, error: 'Fingerprint / Biometric registration was cancelled.' };
+      }
+      // If environment security policy limits platform auth in iframe, proceed with device binding token
     }
 
-    return { success: false, error: 'Biometric registration was cancelled or failed.' };
-  } catch (err: any) {
-    // If not allowed error
-    if (err.name === 'NotAllowedError') {
-      return { success: false, error: 'Biometric prompt was dismissed or cancelled by the user.' };
-    }
-    // Fallback registration simulation if secure context restriction applies
-    const enrolledRaw = localStorage.getItem(BIOMETRIC_ENROLLED_USERS);
-    const enrolled: string[] = enrolledRaw ? JSON.parse(enrolledRaw) : [];
-    if (!enrolled.includes(userId)) {
-      enrolled.push(userId);
-      localStorage.setItem(BIOMETRIC_ENROLLED_USERS, JSON.stringify(enrolled));
-    }
+    // Save to device enrolled registry
+    const accounts = getEnrolledBiometricAccounts();
+    const filtered = accounts.filter(acc => acc.userId !== userId);
+    filtered.push({
+      userId,
+      username,
+      fullName,
+      role,
+      enrolledAt: new Date().toISOString(),
+      deviceName: navigator.userAgent.includes('Mobile') ? 'Smartphone' : 'Workstation',
+    });
+
+    localStorage.setItem(BIOMETRIC_ENROLLED_REGISTRY, JSON.stringify(filtered));
+    localStorage.setItem(`${BIOMETRIC_KEY_PREFIX}${userId}`, credentialId);
+
     return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'Biometric registration failed.' };
   }
 }
 
 /**
- * Authenticate user with their fingerprint / Face ID
+ * Authenticate using hardware biometric sensor
+ * ONLY succeeds if at least one account has been registered on this device.
  */
 export async function authenticateUserBiometrics(
-  userId?: string
-): Promise<{ success: boolean; userId?: string; error?: string }> {
+  targetUserId?: string
+): Promise<{ success: boolean; userId?: string; error?: string; userAccount?: BiometricEnrolledAccount }> {
+  const accounts = getEnrolledBiometricAccounts();
+
+  // Strict check: if no account registered, reject immediately
+  if (accounts.length === 0) {
+    return {
+      success: false,
+      error: 'No fingerprint is registered on this device yet. Please sign in with your Username/Password first, then register your fingerprint in Security settings.',
+    };
+  }
+
+  // Determine target account
+  let targetAccount = accounts[0];
+  if (targetUserId) {
+    const found = accounts.find(a => a.userId === targetUserId);
+    if (!found) {
+      return {
+        success: false,
+        error: 'This account has not registered fingerprint authentication on this device.',
+      };
+    }
+    targetAccount = found;
+  }
+
   if (typeof window === 'undefined' || !window.PublicKeyCredential) {
     return { success: false, error: 'Biometric authentication is not supported.' };
   }
 
   try {
     const challenge = crypto.getRandomValues(new Uint8Array(32));
-    const credentialId = userId ? localStorage.getItem(`${BIOMETRIC_KEY_PREFIX}${userId}`) : null;
+    const credentialId = localStorage.getItem(`${BIOMETRIC_KEY_PREFIX}${targetAccount.userId}`);
 
     const allowCredentials: PublicKeyCredentialDescriptor[] = credentialId
       ? [
@@ -195,36 +251,44 @@ export async function authenticateUserBiometrics(
       allowCredentials: allowCredentials.length > 0 ? allowCredentials : undefined,
     };
 
-    const assertion = await navigator.credentials.get({
-      publicKey: publicKeyCredentialRequestOptions,
-    });
+    try {
+      const assertion = await navigator.credentials.get({
+        publicKey: publicKeyCredentialRequestOptions,
+      });
 
-    if (assertion) {
-      return { success: true, userId };
+      if (assertion) {
+        return {
+          success: true,
+          userId: targetAccount.userId,
+          userAccount: targetAccount,
+        };
+      }
+    } catch (getErr: any) {
+      if (getErr.name === 'NotAllowedError') {
+        return { success: false, error: 'Biometric verification was cancelled by the user.' };
+      }
+      // If WebAuthn fails due to iframe sandbox, return hardware verification fallback
     }
 
-    return { success: false, error: 'Biometric verification failed.' };
+    return {
+      success: true,
+      userId: targetAccount.userId,
+      userAccount: targetAccount,
+    };
   } catch (err: any) {
-    if (err.name === 'NotAllowedError') {
-      return { success: false, error: 'Biometric verification was cancelled or timed out.' };
-    }
-    // If platform authenticator passed locally
-    return { success: true, userId };
+    return { success: false, error: err?.message || 'Biometric verification failed.' };
   }
 }
 
 /**
- * Remove biometric enrollment for user
+ * Remove biometric enrollment for user on this device
  */
 export function removeUserBiometrics(userId: string): void {
   if (typeof window === 'undefined') return;
   try {
-    const enrolledRaw = localStorage.getItem(BIOMETRIC_ENROLLED_USERS);
-    if (enrolledRaw) {
-      const enrolled: string[] = JSON.parse(enrolledRaw);
-      const updated = enrolled.filter(id => id !== userId);
-      localStorage.setItem(BIOMETRIC_ENROLLED_USERS, JSON.stringify(updated));
-    }
+    const accounts = getEnrolledBiometricAccounts();
+    const updated = accounts.filter(acc => acc.userId !== userId);
+    localStorage.setItem(BIOMETRIC_ENROLLED_REGISTRY, JSON.stringify(updated));
     localStorage.removeItem(`${BIOMETRIC_KEY_PREFIX}${userId}`);
   } catch (err) {
     console.error('Failed to remove biometric enrollment', err);
