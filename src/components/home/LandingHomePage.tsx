@@ -100,13 +100,13 @@ export const LandingHomePage: React.FC<LandingHomePageProps> = ({ onOpenLoginMod
           {/* Main 3D Logo Showcase */}
           <div className="flex justify-center mb-2">
             <div className="relative group p-2">
-              <img
-                src="/hantiflow-logo.png"
-                alt="HantiFlow Business & Accounting"
-                className="w-28 h-28 sm:w-36 sm:h-36 rounded-3xl object-cover shadow-2xl ring-4 ring-blue-500/30 group-hover:scale-105 transition-transform duration-300 mx-auto"
-                referrerPolicy="no-referrer"
+              <AppLogo
+                size="2xl"
+                variant="dark"
+                showText={false}
+                className="mx-auto drop-shadow-2xl group-hover:scale-105 transition-transform duration-300"
               />
-              <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-blue-600/90 text-white text-[10px] font-extrabold tracking-wider uppercase border border-blue-400/40 shadow-md whitespace-nowrap">
+              <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3.5 py-1 rounded-full bg-blue-600 text-white text-[10px] font-extrabold tracking-wider uppercase border border-blue-400/50 shadow-lg shadow-blue-900/50 whitespace-nowrap">
                 Smart Business. Clear Numbers.
               </div>
             </div>
