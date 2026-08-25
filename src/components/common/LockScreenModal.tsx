@@ -7,6 +7,9 @@ import {
   UserCheck,
   LogOut,
   Fingerprint,
+  Sparkles,
+  AlertCircle,
+  CheckCircle2,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import {
@@ -21,17 +24,22 @@ export const LockScreenModal: React.FC = () => {
   const { isScreenLocked, unlockScreen, currentUser, settings, logout } = useApp();
   const [pin, setPin] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [biometricInfo, setBiometricInfo] = useState<BiometricSupportInfo>({
-    supported: false,
+    supported: true,
     platformAuthenticator: false,
-    type: 'none',
-    label: 'Checking biometrics...',
+    type: 'fingerprint',
+    label: 'Fingerprint Sensor',
+    details: '',
   });
   const [isBiometricEnrolled, setIsBiometricEnrolled] = useState(false);
   const [isVerifyingBiometric, setIsVerifyingBiometric] = useState(false);
 
   useEffect(() => {
     if (isScreenLocked) {
+      setError(null);
+      setSuccess(null);
+      setPin('');
       checkBiometricsSupport().then(info => {
         setBiometricInfo(info);
         if (currentUser?.id) {
@@ -61,20 +69,24 @@ export const LockScreenModal: React.FC = () => {
 
   const handleBiometricUnlock = async () => {
     setError(null);
+    setSuccess(null);
     setIsVerifyingBiometric(true);
 
     try {
       const res = await authenticateUserBiometrics(currentUser?.id);
+      setIsVerifyingBiometric(false);
+
       if (res.success) {
-        // Unlock with user pin / bypass
-        unlockScreen(currentUser.pin || '1234');
+        setSuccess('Biometrics verified! Unlocking terminal...');
+        setTimeout(() => {
+          unlockScreen(currentUser.pin || '1234');
+        }, 400);
       } else {
         setError(res.error || 'Biometric verification failed. Please enter your PIN.');
       }
     } catch (err: any) {
-      setError(err?.message || 'Biometric verification error. Please use PIN.');
-    } finally {
       setIsVerifyingBiometric(false);
+      setError(err?.message || 'Biometric verification error. Please use PIN.');
     }
   };
 
@@ -85,17 +97,19 @@ export const LockScreenModal: React.FC = () => {
       const res = await enrollUserBiometrics(
         currentUser.id,
         currentUser.username,
-        currentUser.fullName
+        currentUser.fullName,
+        currentUser.role
       );
+      setIsVerifyingBiometric(false);
       if (res.success) {
         setIsBiometricEnrolled(true);
+        setSuccess('Fingerprint registered! Touch sensor to unlock.');
       } else {
         setError(res.error || 'Failed to register biometrics on this device.');
       }
     } catch (err: any) {
-      setError(err?.message || 'Biometric registration error.');
-    } finally {
       setIsVerifyingBiometric(false);
+      setError(err?.message || 'Biometric registration error.');
     }
   };
 
@@ -122,30 +136,39 @@ export const LockScreenModal: React.FC = () => {
           </div>
         )}
 
-        {/* Biometric Unlock Option */}
-        {biometricInfo.supported && (
-          <div className="p-3 bg-indigo-50/60 border border-indigo-100 rounded-2xl space-y-2">
-            <button
-              type="button"
-              onClick={handleBiometricUnlock}
-              disabled={isVerifyingBiometric}
-              className="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-xl shadow-md shadow-indigo-600/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <Fingerprint className={`w-4 h-4 ${isVerifyingBiometric ? 'animate-pulse' : ''}`} />
-              <span>{isVerifyingBiometric ? 'Verifying...' : `Unlock with ${biometricInfo.label}`}</span>
-            </button>
-
-            {!isBiometricEnrolled && (
-              <button
-                type="button"
-                onClick={handleRegisterBiometrics}
-                className="text-[11px] text-indigo-600 hover:text-indigo-800 font-medium underline underline-offset-2 cursor-pointer"
-              >
-                Enroll phone fingerprint for this device
-              </button>
-            )}
+        {success && (
+          <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 font-medium">
+            {success}
           </div>
         )}
+
+        {/* Biometric Unlock Option */}
+        <div className="p-3 bg-indigo-50/60 border border-indigo-100 rounded-2xl space-y-2.5">
+          <button
+            type="button"
+            onClick={handleBiometricUnlock}
+            disabled={isVerifyingBiometric}
+            className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md shadow-indigo-600/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <Fingerprint className={`w-4 h-4 ${isVerifyingBiometric ? 'animate-pulse' : ''}`} />
+            <span>
+              {isVerifyingBiometric
+                ? 'Verifying Sensor...'
+                : `Touch Sensor to Unlock (${biometricInfo.label})`}
+            </span>
+          </button>
+
+          {!isBiometricEnrolled && (
+            <button
+              type="button"
+              onClick={handleRegisterBiometrics}
+              disabled={isVerifyingBiometric}
+              className="text-[11px] text-indigo-600 hover:text-indigo-800 font-semibold underline underline-offset-2 cursor-pointer"
+            >
+              Enroll device fingerprint now
+            </button>
+          )}
+        </div>
 
         <form onSubmit={handleUnlock} className="space-y-4">
           <div className="relative">

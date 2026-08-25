@@ -26,29 +26,29 @@ import {
 import { useApp } from '../../context/AppContext';
 import {
   checkBiometricsSupport,
-  authenticateUserBiometrics,
   hasAnyBiometricEnrolled,
   getEnrolledBiometricAccounts,
   BiometricSupportInfo,
 } from '../../lib/biometrics';
 import { PWAInstallButton } from '../common/PWAInstallButton';
+import { BiometricAuthModal } from '../common/BiometricAuthModal';
 
 interface LandingHomePageProps {
   onOpenLoginModal: () => void;
 }
 
 export const LandingHomePage: React.FC<LandingHomePageProps> = ({ onOpenLoginModal }) => {
-  const { settings, isSupabaseConnected, loginWithCredentials, switchUserById } = useApp();
+  const { settings, isSupabaseConnected } = useApp();
 
   const [biometricInfo, setBiometricInfo] = useState<BiometricSupportInfo>({
-    supported: false,
+    supported: true,
     platformAuthenticator: false,
-    type: 'none',
-    label: 'Checking biometrics...',
+    type: 'fingerprint',
+    label: 'Fingerprint Sensor',
+    details: '',
   });
   const [hasEnrolledBiometrics, setHasEnrolledBiometrics] = useState(false);
-  const [biometricStatusMsg, setBiometricStatusMsg] = useState<string | null>(null);
-  const [isScanningBiometrics, setIsScanningBiometrics] = useState(false);
+  const [isBiometricModalOpen, setIsBiometricModalOpen] = useState(false);
 
   useEffect(() => {
     checkBiometricsSupport().then(info => {
@@ -56,37 +56,6 @@ export const LandingHomePage: React.FC<LandingHomePageProps> = ({ onOpenLoginMod
       setHasEnrolledBiometrics(hasAnyBiometricEnrolled());
     });
   }, []);
-
-  const handleBiometricLogin = async () => {
-    setBiometricStatusMsg(null);
-
-    // If no fingerprint registered yet, instruct user to sign in with password first
-    if (!hasEnrolledBiometrics) {
-      setBiometricStatusMsg(
-        'No fingerprint is registered on this device yet. Please sign in with your Username and Password first, then register your fingerprint in Security settings.'
-      );
-      return;
-    }
-
-    setIsScanningBiometrics(true);
-    setBiometricStatusMsg('Touch your fingerprint sensor or verify Face ID...');
-
-    try {
-      const res = await authenticateUserBiometrics();
-      if (res.success && res.userId) {
-        setBiometricStatusMsg('Biometrics verified! Opening terminal...');
-        switchUserById(res.userId);
-      } else {
-        setBiometricStatusMsg(
-          res.error || 'Biometric verification failed. Please sign in with username and password.'
-        );
-      }
-    } catch (err: any) {
-      setBiometricStatusMsg(err?.message || 'Biometric sensor error. Please use username and password.');
-    } finally {
-      setIsScanningBiometrics(false);
-    }
-  };
 
   return (
     <div id="landing-home-page" className="min-h-screen w-full bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white relative overflow-x-hidden font-sans">
@@ -160,26 +129,15 @@ export const LandingHomePage: React.FC<LandingHomePageProps> = ({ onOpenLoginMod
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </button>
 
-            {biometricInfo.supported && (
-              <button
-                type="button"
-                onClick={handleBiometricLogin}
-                disabled={isScanningBiometrics}
-                className="w-full sm:w-auto px-6 py-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 text-sm font-bold rounded-2xl flex items-center justify-center gap-2.5 transition-all cursor-pointer hover:border-indigo-500/40"
-              >
-                <Fingerprint className={`w-4 h-4 text-indigo-400 ${isScanningBiometrics ? 'animate-pulse' : ''}`} />
-                <span>{hasEnrolledBiometrics ? 'Fingerprint Sign In' : 'Biometric Sensor Login'}</span>
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => setIsBiometricModalOpen(true)}
+              className="w-full sm:w-auto px-6 py-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 text-sm font-bold rounded-2xl flex items-center justify-center gap-2.5 transition-all cursor-pointer hover:border-indigo-500/40"
+            >
+              <Fingerprint className="w-4 h-4 text-indigo-400" />
+              <span>{hasEnrolledBiometrics ? 'Fingerprint Sign In' : 'Biometric Sensor Login'}</span>
+            </button>
           </div>
-
-          {/* Biometric Status Notification */}
-          {biometricStatusMsg && (
-            <div className="inline-flex items-start gap-2.5 p-3.5 rounded-2xl bg-slate-900/90 border border-indigo-500/30 text-xs text-indigo-200 text-left max-w-xl animate-in fade-in">
-              <Info className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
-              <span>{biometricStatusMsg}</span>
-            </div>
-          )}
         </section>
 
         {/* Security & Authentication Protocol Overview Card */}
@@ -347,6 +305,16 @@ export const LandingHomePage: React.FC<LandingHomePageProps> = ({ onOpenLoginMod
           Secure Multi-User System • Protected by 256-bit Encryption & Hardware WebAuthn
         </p>
       </footer>
+
+      {/* Biometric Authentication Dialog */}
+      <BiometricAuthModal
+        isOpen={isBiometricModalOpen}
+        onClose={() => setIsBiometricModalOpen(false)}
+        onOpenStandardLogin={() => {
+          setIsBiometricModalOpen(false);
+          onOpenLoginModal();
+        }}
+      />
     </div>
   );
 };
